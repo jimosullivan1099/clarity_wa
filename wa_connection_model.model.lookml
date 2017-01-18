@@ -15,3 +15,7 @@
 #       foreign_key: order_id
 #     - join: users
 #       foreign_key: orders.user_id
+
+
+- explore: agencies
+  label: 'Project Descriptor Model'
