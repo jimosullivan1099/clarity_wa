@@ -1,7 +1,7 @@
 - connection: clarity_wa
 
 
-- scoping: true           # for backward compatibility
+
 - include: "*.view.lookml"       # include all views in this project
 - include: "*.dashboard.lookml"      # include all views in this project
 # include all dashboards in this project
