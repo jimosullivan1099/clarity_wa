@@ -7,8 +7,9 @@
     sql: ${TABLE}.id
 
   - dimension: notes
-    sql: ${TABLE}.notes
-
+    sql: fn_getSkipAllContentTags(${TABLE}.notes)
+    
+    
   - dimension: ref_client_service
     type: int
     sql: ${TABLE}.ref_client_service

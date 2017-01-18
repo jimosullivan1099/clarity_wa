@@ -1,6 +1,6 @@
 - view: outbound_recidivism
   derived_table:
-    sql_trigger_value: SELECT CURRENT_DATE()
+#    sql_trigger_value: SELECT CURRENT_DATE()
     indexes: [screen_id, client_id]
     sql: |
       select 

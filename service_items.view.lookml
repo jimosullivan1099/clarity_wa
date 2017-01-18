@@ -28,11 +28,8 @@
 #     type: number
 #     sql: ${TABLE}.default_amount
 # 
-#   - dimension_group: end_availability
-#     type: time
-#     timeframes: [date, week, month]
-#     convert_tz: false
-#     sql: ${TABLE}.end_availability
+  - dimension: end_availability
+    sql: ${TABLE}.end_availability
 # 
 #   - dimension: expense_type
 #     type: yesno
@@ -66,9 +63,13 @@
 #     type: int
 #     sql: ${TABLE}.ref_charge_type
 # 
-#   - dimension: ref_delivery_type
-#     type: int
-#     sql: ${TABLE}.ref_delivery_type
+  - dimension: ref_delivery_type
+    type: int
+    sql: ${TABLE}.ref_delivery_type
+    
+  - dimension: deleted
+    type: yesno
+    sql: ${TABLE}.deleted    
 
 #   - dimension: ref_funding
 #     type: int
@@ -95,10 +96,7 @@
 #     type: int
 #     sql: ${TABLE}.si_cat3
 
-#   - dimension_group: start_availability
-#     type: time
-#     timeframes: [date, week, month]
-#     convert_tz: false
-#     sql: ${TABLE}.start_availability
+  - dimension: start_availability
+    sql: ${TABLE}.start_availability
 
 

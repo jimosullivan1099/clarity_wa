@@ -31,20 +31,21 @@
             client_program_demographics cpd
             left join client_programs cp
                 on cpd.ref_program = cp.id
-                
+            inner join programs p on cp.ref_program = p.id    
             inner join ${dates.SQL_TABLE_NAME} dates
                     ON dates.date >= cp.start_date
                     AND (dates.date < cp.end_date OR cp.end_date IS NULL)
-            where cp.start_date > '2015-01-01'
+            where dates.date >= '2016-01-01' and p.ref_category in (1,2,3,8,9,10)
+            AND (cp.deleted = 0 or cp.deleted is null)
             
             GROUP BY 1,2,3,4,5
             
 
   fields:
 
-  - measure: count_active_clients
-    type: count
-    drill_fields: detail*
+#   - measure: count_active_clients
+#     type: count
+#     drill_fields: detail*
     
   - measure: count_unique_active_clients
     type: count_distinct

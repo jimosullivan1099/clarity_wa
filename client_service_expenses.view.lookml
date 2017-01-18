@@ -17,10 +17,12 @@
 
   - dimension: amount
     type: number
+    value_format_name: usd
     sql: ${TABLE}.amount
 
   - measure: total_amount
     type: sum
+    value_format_name: usd
     sql: ${TABLE}.amount
 
 

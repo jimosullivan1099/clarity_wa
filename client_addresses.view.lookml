@@ -55,16 +55,19 @@
     sql: ${TABLE}.ref_client
 
   - dimension: ref_type
-    type: int
+    label: 'Address Type'
     sql: ${TABLE}.ref_type
     sql: fn_getPicklistValueName('address_types',${TABLE}.ref_type)    
-      
-
 
   - dimension: ref_user
     hidden: true
     type: int
     sql: ${TABLE}.ref_user
+    
+  - dimension: deleted
+    hidden: true
+    type: int
+    sql: ${TABLE}.deleted
 
   - dimension: ref_user_updated
     hidden: true
@@ -81,6 +84,11 @@
   - dimension: zipcode
     type: zipcode
     sql: ${TABLE}.zipcode
+    
+  - dimension: location
+    type: location
+    sql_latitude: ${TABLE}.latitude
+    sql_longitude: ${TABLE}.longitude 
 
   - measure: count
     type: count

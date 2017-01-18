@@ -4,14 +4,13 @@
       SELECT
         cpd.ref_client
         ,cpd.ref_program
-        ,count(*) as number_of_screenings
         ,min(
           case when screen_type = 2
           then cpd.id end)
           AS first_entry_screen_id
 
         ,max(
-          case when screen_type = 3
+          case when screen_type IN (3,6)
           then cpd.id end)
           AS last_update_screen_id
   
@@ -28,13 +27,13 @@
       FROM 
       client_program_demographics cpd 
       INNER JOIN client_programs cp on cpd.ref_program = cp.id
-      WHERE {% condition enrollments.start_date %} cp.start_date {% endcondition %}
-      AND ({% condition enrollments.end_date_or_today_date %} cp.end_date {% endcondition %}
-        OR cp.end_date IS NULL) and (cp.deleted is NULL or cp.deleted = 0)
+      WHERE 
+      (cp.deleted is NULL or cp.deleted = 0) 
+      AND (cpd.deleted is NULL or cpd.deleted = 0) AND cpd.program_date is not NULL
       
       GROUP BY 1,2
-      
- 
+    persist_for: 3 hour
+    indexes: [ref_program]  
 
   fields:
   
@@ -54,12 +53,6 @@
     hidden: true
     type: number
     sql: ${TABLE}.ref_program
-
-  - dimension: number_of_screenings
-    hidden: true
-    type: number
-    sql: ${TABLE}.number_of_screenings
-
 
   - dimension: first_entry_screen_id
     type: int
@@ -83,6 +76,7 @@
     sql: ${TABLE}.last_annual_screen_id
 
     
+
   - dimension: last_screening_to_analyze
     type: int
     hidden: true

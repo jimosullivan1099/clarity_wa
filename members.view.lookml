@@ -41,20 +41,25 @@
     sql: ${TABLE}.recent_services
 
   - dimension: ref_agency
+    hidden: true
     type: int
     sql: ${TABLE}.ref_agency
 
   - dimension: ref_file
+    hidden: true
     type: int
     sql: ${TABLE}.ref_file
 
   - dimension: ref_module
+    hidden: true
     type: int
     sql: ${TABLE}.ref_module
 
   - dimension: ref_profile_screen
-    type: int
-    sql: ${TABLE}.ref_profile_screen
+    label: 'Profile Override'
+    sql: ${screens.name}
+    
+    
 
   - dimension: ref_user
     type: int
@@ -63,6 +68,34 @@
   - dimension: warning_days
     type: int
     sql: ${TABLE}.warning_days
+    
+  - dimension_group: last_visited
+    type: time
+    timeframes: [time, date, week, month]
+    sql: ${users.last_visited_date}
+
+  - dimension: name
+    sql: ${users.name}
+
+  - dimension: email
+    sql: ${users.email}    
+
+  - dimension: access_role
+    sql: ${user_groups.name}    
+
+  - dimension: user_last_updated
+    sql: ${users.ref_user_updated}
+
+  - dimension: last_updated 
+    sql: ${users.last_updated_date}    
+
+  - dimension:  status
+    sql: ${users.user_status}    
+    
+    
+  - dimension: deleted
+    type: yesno
+    sql: ${users.deleted}    
 
   - measure: count
     type: count

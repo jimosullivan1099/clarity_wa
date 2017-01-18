@@ -19,6 +19,7 @@
     sql: ${TABLE}.name
 
   - dimension: ref_state
+    label: 'StateID'
     type: int
     sql: ${TABLE}.ref_state
 

@@ -63,12 +63,12 @@
     sql: ${TABLE}.ref_file
 
   - dimension: ref_user
-    label: User Creating
+    label: 'User Creating'
     type: int
     sql: ${TABLE}.ref_user
 
   - dimension: ref_user_updated
-    label: User Updating
+    label: 'User Updating'
     type: int
     sql: ${TABLE}.ref_user_updated
 

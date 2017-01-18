@@ -16,10 +16,12 @@
     sql: ${TABLE}.added_date
 
   - dimension: aff_res_proj
+    label: 'Affiliated with a Residential Project'
     type: int
     sql: ${TABLE}.aff_res_proj
 
   - dimension: aff_res_proj_ids
+    label: 'Affiliated Project Ids'
     sql: ${TABLE}.aff_res_proj_ids
 
   - dimension: allow_autoservice_placement
@@ -53,6 +55,14 @@
   - dimension: cascade_threshold
     type: int
     sql: ${TABLE}.cascade_threshold
+    
+  - dimension: availability
+    sql_case:
+            Limited: ${TABLE}.availability = 1
+            Full: ${TABLE}.availability = 2
+            else: None  
+
+
 
   - dimension: close_services
     type: yesno
@@ -89,15 +99,14 @@
     type: int
     sql: ${TABLE}.enable_notes
 
+  - dimension: enable_assessments
+    type: yesno
+    sql: ${TABLE}.enable_assessments
+
   - dimension: funding_source
     hidden: true
     type: int
     sql: ${TABLE}.funding_source
-
-  - dimension: funder
-    label: 'Project Funding Source'
-    bypass_suggest_restrictions: true
-    sql: fn_getPicklistValueName('funding_source',${funding_source})   #program_categories
 
   - dimension: geocode
     sql: ${TABLE}.geocode
@@ -126,8 +135,7 @@
 
 
   - dimension: program_applicability
-    type: int
-    sql: ${TABLE}.program_applicability
+    sql: fn_getPicklistValueName('program_applicability',${TABLE}.program_applicability)   
 
   - dimension: public_listing
     type: int
@@ -139,6 +147,7 @@
     sql: ${TABLE}.ref_agency
 
   - dimension: ref_category
+    hidden: true
     type: int
     sql: ${TABLE}.ref_category
     
@@ -148,34 +157,49 @@
     sql: fn_getPicklistValueName('program_categories',${ref_category})   #program_categories
 
   - dimension: ref_site_type
-    type: int
-    sql: ${TABLE}.ref_site_type
+    label: 'Site Type'
+    sql: fn_getPicklistValueName('site_types',${TABLE}.ref_site_type)     
 
   - dimension: ref_target_b
-    sql: ${TABLE}.ref_target_b
+    label: 'Target Population'
+    sql: fn_getPicklistValueName('targets_b',${TABLE}.ref_target_b)   
 
   - dimension: ref_template
+    hidden: true
     type: int
     sql: ${TABLE}.ref_template
 
-  - dimension: ref_user_updated
-    type: int
-    sql: ${TABLE}.ref_user_updated
+  - dimension: template
+    bypass_suggest_restrictions: true
+    sql: ${program_templates.name}    
+
+
+
+  - dimension: ref_user_updated 
+    label: 'User Updating'
+    sql: fn_getUserNameById(${TABLE}.ref_user_updated)
 
   - dimension: site_id
     type: int
-    # hidden: true
+    hidden: true
     sql: ${TABLE}.site_id
 
   - dimension: status
-    hidden: true
-    type: yesno
-    sql: ${TABLE}.status
+    label:  'Program Active'
+    sql_case:
+            Active: ${TABLE}.status = 1
+            Inactive: ${TABLE}.status = 2
+            else: null
+
 
   - dimension: tracking_method
-    type: int
-    sql: ${TABLE}.tracking_method
-
+    sql: fn_getPicklistValueName('tracking_method',${TABLE}.tracking_method)   
+    
+  - dimension: first_client_enrollment_date
+    sql: |
+          (select min(start_date) from client_programs where ref_program = ${TABLE}.id)    
+    
+    
   - measure: count
     type: count
     drill_fields: detail*

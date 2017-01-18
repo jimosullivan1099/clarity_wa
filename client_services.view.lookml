@@ -55,19 +55,27 @@
     type: int
     sql: ${TABLE}.deleted  
 
-#   - dimension: ref_user
-#     type: int
-#     sql: ${TABLE}.ref_user
-# 
-#   - dimension: ref_user_updated
-#     type: int
-#     sql: ${TABLE}.ref_user_updated
+  - dimension: ref_user 
+    label: 'User Creating'
+    sql: fn_getUserNameById(${TABLE}.ref_user)
+
+  - dimension: ref_user_updated 
+    label: 'User Updating'
+    sql: fn_getUserNameById(${TABLE}.ref_user_updated)
 
   - dimension_group: start
     type: time
     timeframes: [date, week, month]
     convert_tz: false
     sql: ${TABLE}.start_date
+    
+
+  - dimension: days_of_longterm_service
+    label: 'Days of Service (long term)'
+    bypass_suggest_restrictions: true
+    suggest_dimension: 
+    type: int
+    sql: DATEDIFF(COALESCE(${end_date},NOW()),${start_date})    
     
  
 

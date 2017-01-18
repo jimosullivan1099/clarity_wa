@@ -1,4 +1,5 @@
 - view: last_screen
+  label: 'Update/Exit Screen'
   sql_table_name: |
     client_program_demographics
   fields:
@@ -16,27 +17,32 @@
 
 
   - dimension: benefits_snap
-    label: 'Non cash: Has SNAP'
+    label: 'SNAP'
     type: yesno
+    group_label: 'Non-Cash Benefits'
     sql: ${TABLE}.benefit_snap
 
   - dimension: benefits_medicaid
-    label: 'Health Insurance: Has Medicaid'
+    label: 'Medicaid'
     type: yesno
+    group_label: 'Health Insurance'
     sql: ${TABLE}.benefits_medicaid
 
   - dimension: benefits_medicare
-    label: 'Health Insurance: Has Medicare'
+    label: 'Medicare'
     type: yesno
+    group_label: 'Health Insurance'
     sql: ${TABLE}.benefits_medicare
 
   - dimension: benefits_no_insurance
-    label: 'Health Insurance: No Health Insurance'
+    label: 'No Health Insurance'
+    group_label: 'Health Insurance'
     type: yesno
     sql: ${TABLE}.benefits_no_insurance
 
   - dimension: benefits_noncash
-    label: 'Non cash: Any Non Cash Benefit'
+    label: '_Any Non Cash Benefit'
+    group_label: 'Non-Cash Benefits'
     sql: fn_getPicklistValueName('benefits_noncash', ${TABLE}.benefits_noncash)
 
   - dimension: benefits_other
@@ -49,48 +55,57 @@
     sql: ${TABLE}.benefits_other_source
 
   - dimension: benefits_private_insurance
-    label: 'Health Insurance Has Private Insurance'
+    label: 'Private Insurance'
     type: yesno
+    group_label: 'Health Insurance'
     sql: ${TABLE}.benefits_private_insurance
 
   - dimension: benefits_schip
-    label: 'Health Insurance: Has SCHIP'
+    label: 'SCHIP'
     type: yesno
+    group_label: 'Health Insurance'
     sql: ${TABLE}.benefits_schip
 
   - dimension: benefits_section8
-    label: 'Non cash: Has Section 8'
+    label: 'Section 8'
     type: yesno
+    group_label: 'Non-Cash Benefits'
     sql: ${TABLE}.benefits_section8
 
   - dimension: benefits_tanf_childcare
-    label: 'Non cash: Has TANF Childcare'
+    label: 'TANF Childcare'
     type: yesno
+    group_label: 'Non-Cash Benefits'
     sql: ${TABLE}.benefits_tanf_childcare
 
   - dimension: benefits_tanf_other
-    label: 'Non cash: Has TANF Other'
+    label: 'TANF Other'
     type: yesno
+    group_label: 'Non-Cash Benefits'
     sql: ${TABLE}.benefits_tanf_other
 
   - dimension: benefits_tanf_transportation
-    label: 'Non cash: Has TANF Transportaion'
+    label: 'TANF Transportaion'
     type: yesno
+    group_label: 'Non-Cash Benefits'
     sql: ${TABLE}.benefits_tanf_transportation
 
   - dimension: benefits_temp_rent
-    label: 'Non cash: Has Temporary Rental Assistance'
+    label: 'Temporary Rental Assistance'
     type: yesno
+    group_label: 'Non-Cash Benefits'
     sql: ${TABLE}.benefits_temp_rent
 
   - dimension: benefits_va_medical
-    label: 'Health Insurance: Has VA Medical Insurance'
+    label: 'VA Medical Insurance'
     type: yesno
+    group_label: 'Health Insurance'
     sql: ${TABLE}.benefits_va_medical
 
   - dimension: benefits_wic
-    label: 'Non cash: HAS WIC'
+    label: 'WIC'
     type: yesno
+    group_label: 'Non-Cash Benefits'
     sql: ${TABLE}.benefits_wic
 
   - dimension: chronic_1
@@ -123,16 +138,21 @@
     type: int
     sql: ${TABLE}.chronic_homeless
 
-#   - dimension: chronic_homeless_calculation
-#     sql:    CASE WHEN ${client_programs.head_of_household} = 1 AND ${TABLE}.disabled = 1 AND  ( ${TABLE}.chronic_1 = 1 OR  ${TABLE}.chronic_2 = 4) THEN 'Chronic Homeless'    ELSE 'Not Chronic Homeless'    END
 
   - dimension: Employed
     sql: fn_getPicklistValueName('employment_is',${TABLE}.employment_is)
 
-  - dimension: disabled
-    label: 'Disability: Any'
-    type: int
-    sql: ${TABLE}.disabled
+  - dimension: any_disability
+    label: 'Any Disability'
+    type: yesno
+    group_label: 'Disability Types'
+    sql: ${TABLE}.health_chronic = 1 or ${TABLE}.health_dev_disability = 1 or ${TABLE}.health_hiv = 1 or ${TABLE}.health_mental = 1 or ${TABLE}.health_phys_disability = 1 or (${TABLE}.health_substance_abuse =1 or ${TABLE}.health_substance_abuse =2 or ${TABLE}.health_substance_abuse =3  )
+
+    
+  - dimension: disabiing_condition
+    label: 'Disabling Condition'
+    group_label: 'Disability Types'
+    sql: fn_getPicklistValueName('disabled',${TABLE}.disabled)    
 
   - dimension: exit_destination
     hidden: true
@@ -160,10 +180,14 @@
     label: 'Exit Reason '
     sql: fn_getPicklistValueName('exit_reason',${exit_reason})  
 
+
+
+
   - dimension: health_chronic
-    label: 'Disability: Chronic Health'
-    type: yesno
+    label: 'Chronic Health'
+    group_label: 'Disability Types'
     sql: ${TABLE}.health_chronic
+    sql: fn_getPicklistValueName('health_chronic',${TABLE}.health_chronic)
 
   #- dimension: health_chronic_documented
   #  type: int
@@ -178,9 +202,9 @@
   #  sql: ${TABLE}.health_chronic_services
 
   - dimension: health_dev_disability
-    label: 'Disability: Developmental'
-    type: yesno
-    sql: ${TABLE}.health_dev_disability
+    label: 'Developmental'
+    group_label: 'Disability Types'
+    sql: fn_getPicklistValueName('health_dev_disability',${TABLE}.health_dev_disability)    
 
   #- dimension: health_dev_disability_documented
   #  type: int
@@ -196,8 +220,7 @@
 
   - dimension: health_dv
     label: 'Domestic Violence'
-    type: yesno
-    sql: ${TABLE}.health_dv
+    sql: fn_getPicklistValueName('health_dv',${TABLE}.health_dv)    
 
   #- dimension: health_dv_occurred
   #  type: int
@@ -208,10 +231,11 @@
   #  sql: ${TABLE}.health_general
 
   - dimension: health_hiv
-    label: 'Disability: HIV/AIDS'
-    type: yesno
-    sql: ${TABLE}.health_hiv
-
+    label: 'HIV/AIDS'
+    group_label: 'Disability Types'
+    sql: fn_getPicklistValueName('health_hiv',${TABLE}.health_hiv)    
+    
+  
 #  - dimension: health_hiv_documented
 #    type: int
 #    sql: ${TABLE}.health_hiv_documented
@@ -225,33 +249,39 @@
 #    sql: ${TABLE}.health_hiv_services
 
   - dimension: health_ins_cobra
-    label: 'Health Insurance: Has COBRA'
+    label: 'COBRA'
     type: yesno
+    group_label: 'Health Insurance'
     sql: ${TABLE}.health_ins_cobra
 
   - dimension: health_ins_emp
-    label: 'Health Insurance: Has Employer Provided'
+    label: 'Employer Provided'
     type: yesno
+    group_label: 'Health Insurance'
     sql: ${TABLE}.health_ins_emp
 
   - dimension: health_ins_ppay
-    label: 'Health Insurance: Has Private Pay'
+    label: 'Private Pay'
     type: yesno
+    group_label: 'Health Insurance'
     sql: ${TABLE}.health_ins_ppay
 
   - dimension: health_ins_state
-    label: 'Health Insurance: Has State Insurance for Adults'
+    label: 'State Insurance for Adults'
     type: yesno
+    group_label: 'Health Insurance'
     sql: ${TABLE}.health_ins_state
 
   - dimension: health_insurance
-    label: 'Health Insurance: Covered by Health Insurance'
+    label: '_Covered by Health Insurance'
     type: yesno
+    group_label: 'Health Insurance'
     sql: ${TABLE}.health_insurance
 
+
   - dimension: health_mental
-    label: 'Disability: Mental Health'
-    type: int
+    label: 'Mental Health'
+    group_label: 'Disability Types'
     sql: fn_getPicklistValueName('health_mental',${TABLE}.health_mental)
 
 #   - dimension: health_mental_confirmed
@@ -275,14 +305,15 @@
 #     sql: ${TABLE}.health_mental_smi
 
   - dimension: health_phys_disability
-    label: 'Disability: Physical'
-    type: yesno
-    sql: ${TABLE}.health_phys_disability
+    label: 'Physical'
+    group_label: 'Disability Types'
+    sql: fn_getPicklistValueName('health_phys_disability',${TABLE}.health_phys_disability)
     
 
   - measure: average_cash_income
     type: average   # can be average, sum, min, max, count, count_distinct, or number
-    format: '$%0.0f'
+    value_format_name: usd
+    group_label: 'Income Sources and Amounts'
     sql: ${income_individual}      
     
 # 
@@ -309,7 +340,8 @@
 #     sql: ${TABLE}.health_pregnancy_date
 
   - dimension: health_substance_abuse
-    label: 'Disability: Substance Abuse'
+    label: 'Substance Abuse'
+    group_label: 'Disability Types'
     sql: fn_getPicklistValueName('health_substance_abuse',${TABLE}.health_substance_abuse)
 
 #   - dimension: health_substance_abuse_confirmed
@@ -340,25 +372,29 @@
 #     type: int
 #     sql: ${TABLE}.housing_ass_exit_2
 
+  - dimension: housing_ass_exit
+    label:  'Housing Assessment at Exit'
+    sql: fn_getPicklistValueName('housing_ass_exit',${TABLE}.housing_ass_exit)
+
   - dimension: housing_status
     hidden: true
     type: int
     sql: ${TABLE}.housing_status
 
   - dimension: housing_status_text
-    hidden: true
+    label: 'Housing Status'
     sql: fn_getPicklistValueName('housing_status',${housing_status})
     
-  - dimension: left_stably_housed
-    type: yesno
-    sql: ${housing_status_text} = 'Stably housed'
-
-
-  - measure: count_stably_housed
-    type: count_distinct
-    sql: ${ref_client}
-    filters:
-      housing_status_text: 'Stably housed'
+#   - dimension: left_stably_housed
+#     type: yesno
+#     sql: ${housing_status_text} = 'Stably housed'
+# 
+# 
+#   - measure: count_stably_housed
+#     type: count_distinct
+#     sql: ${ref_client}
+#     filters:
+#       housing_status_text: 'Stably housed'
       
   - measure: count_asked_about_housing
     hidden: true
@@ -370,6 +406,7 @@
     
       
   - measure: percent_stably_housed
+    hidden: true
     type: number
     format: '%0.1f%'
     sql: 100.0 * ${count_stably_housed} / NULLIF(${count_asked_about_housing},0)
@@ -385,7 +422,8 @@
     sql: ${TABLE}.income_cash_is
 
   - dimension: any_income
-    label: 'Income: Income from any Source'
+    label: '_Income from any Source'
+    group_label: 'Income Sources and Amounts'
     sql_case:
             No Income: ${income_cash_is} = 0
             Income: ${income_cash_is} = 1
@@ -393,13 +431,15 @@
             
             
   - dimension: income_childsupport
-    label: 'Income: Child Support'
+    label: 'Child Support Amount'
     type: int
+    group_label: 'Income Sources and Amounts'
     sql: ${TABLE}.income_childsupport
 
   - dimension: income_childsupport_is
-    label: 'Income: Has Childsupport'
+    label: 'Child Support'
     type: yesno
+    group_label: 'Income Sources and Amounts'
     sql: ${TABLE}.income_childsupport_is
 
   - dimension: income_earned
@@ -409,31 +449,35 @@
     sql: ${TABLE}.income_earned
     
   - dimension: income_earned_tier
-    label: 'Income: Earned Tiers'
+    label: 'Earned Income Tiers'
     type: tier
     style: integer
     tiers: [0,100,500,1000,5000]
+    group_label: 'Income Sources and Amounts'
     sql: ${income_earned}
     
   - measure: average_income_earned
-    label: 'Income: Average Earned'
+    label: 'Earned Income Average'
     type: average   # can be average, sum, min, max, count, count_distinct, or number
-    format: '$%0.0f'
+    value_format_name: usd
+    group_label: 'Income Sources and Amounts'
     drill_fields: [income_earned_tier, count]
     sql: ${income_earned}
     drill_fields: detail*
 
  
   - measure: total_income_earned
-    label: 'Income: Total Earned'
+    label: 'Earned Income Total'
     type: sum   # can be average, sum, min, max, count, count_distinct, or number
-    format: '$%0.0f'
+    value_format_name: usd
+    group_label: 'Income Sources and Amounts'
     sql: ${income_earned}    
     drill_fields: detail*
 
 
   - measure: count_with_income
     type: count_distinct
+    group_label: 'Income Sources and Amounts'
     sql: ${ref_client}
     filters:
       any_income: 'Income'
@@ -441,6 +485,7 @@
   - measure: count_asked_about_income
     hidden: true
     type: count_distinct
+    group_label: 'Income Sources and Amounts'
     sql: ${ref_client}
     filters:
       any_income: No Income, Income
@@ -450,45 +495,56 @@
   - measure: percent_with_income
     type: number
     format: '%0.1f%'
+    group_label: 'Income Sources and Amounts'
     sql: 100.0 * ${count_with_income} / NULLIF(${count_asked_about_income},0)
 
   - dimension: income_ga
     type: number
     hidden: true
-    label: 'Income: General Assistance Amount'
+    label: 'General Assistance Amount'
+    group_label: 'Income Sources and Amounts'
     sql: ${TABLE}.income_ga
 
   - dimension: income_ga_is
-    label: 'Income: Has General Assistance'
+    label: 'General Assistance'
     type: yesno
+    group_label: 'Income Sources and Amounts'
     sql: ${TABLE}.income_ga_is
 
   - dimension: income_individual  # TOtal cash income for individual
-    label: 'Total Cash Income'
+    label: '_Total Cash Income'
     type: number
+    value_format_name: usd
+    group_label: 'Income Sources and Amounts'
     sql: ${TABLE}.income_individual
     
   - dimension: income_change  # TOtal cash income for individual
-    label: 'Total Change in Cash Income'
+    label: '_Total Change in Cash Income'
     type: number
+    value_format_name: usd
+    group_label: 'Income Sources and Amounts'
     sql: ${TABLE}.income_individual   -   ${entry_screen.income_individual}
     
     
   - dimension: income_change_tier
-    label: 'Income: Changed Tiers'
+    label: '_Changed Tiers'
     type: tier
     style: integer
+    group_label: 'Income Sources and Amounts'
     tiers: [0,100,500,1000,5000]
     sql: ${income_change}
         
   - measure: average_income_change
     type: average   # can be average, sum, min, max, count, count_distinct, or number
+    value_format_name: usd
+    group_label: 'Income Sources and Amounts'
     sql: ${income_change}      
     
     
   - measure: total_cash_income
     type: sum   # can be average, sum, min, max, count, count_distinct, or number
-    format: '$%0.0f'
+    value_format_name: usd
+    group_label: 'Income Sources and Amounts'
     sql: ${income_individual}  
 
 #   - dimension: income_other
@@ -509,8 +565,9 @@
     sql: ${TABLE}.income_private_disability
 
   - dimension: income_private_disability_is
-    label: 'Income: Has Private Disability Insurance'
+    label: 'Private Disability Insurance'
     type: yesno
+    group_label: 'Income Sources and Amounts'
     sql: ${TABLE}.income_private_disability_is
 
   - dimension: income_private_pension
@@ -519,8 +576,9 @@
     sql: ${TABLE}.income_private_pension
 
   - dimension: income_private_pension_is
-    label: 'Income: Has Private Pension'
+    label: 'Private Pension'
     type: yesno
+    group_label: 'Income Sources and Amounts'
     sql: ${TABLE}.income_private_pension_is
 
   - dimension: income_spousal_support
@@ -529,18 +587,21 @@
     sql: ${TABLE}.income_spousal_support
 
   - dimension: income_spousal_support_is
-    label: 'Income: Has Spousal Support'
+    label: 'Spousal Support'
     type: yesno
+    group_label: 'Income Sources and Amounts'
     sql: ${TABLE}.income_spousal_support_is
 
   - dimension: income_ss_retirement
     hidden: true
     type: number
+    group_label: 'Income Sources and Amounts'
     sql: ${TABLE}.income_ss_retirement
 
   - dimension: income_ss_retirement_is
-    label: 'Income: Has Soc Sec Retirement'
+    label: 'Soc Sec Retirement'
     type: yesno
+    group_label: 'Income Sources and Amounts'
     sql: ${TABLE}.income_ss_retirement_is
 
   - dimension: income_ssdi
@@ -549,11 +610,9 @@
     sql: ${TABLE}.income_ssdi
 
   - dimension: income_ssdi_is
-    label: 'Income: Has SSDI'
-    sql_case:
-            No SSDI: ${TABLE}.income_ssdi_is = 0
-            SSDI: ${TABLE}.income_ssdi_is = 1
-            else: Unknown 
+    label: 'SSDI'
+    group_label: 'Income Sources and Amounts'
+    sql: ${TABLE}.income_ssdi_is
 
   - dimension: income_ssi
     hidden: true
@@ -561,8 +620,9 @@
     sql: ${TABLE}.income_ssi
 
   - dimension: income_ssi_is
-    label: 'Income: Has SSI'
+    label: 'SSI'
     type: yesno
+    group_label: 'Income Sources and Amounts'
     sql: ${TABLE}.income_ssi_is
 
   - dimension: income_tanf
@@ -571,8 +631,9 @@
     sql: ${TABLE}.income_tanf
 
   - dimension: income_tanf_is
-    label: 'Income: Has TANF'
+    label: 'TANF'
     type: yesno
+    group_label: 'Income Sources and Amounts'
     sql: ${TABLE}.income_tanf_is
 
   - dimension: income_unemployment
@@ -585,12 +646,13 @@
     hidden: true
     label: 'Income: Total Unemployment Income'
     type: sum   # can be average, sum, min, max, count, count_distinct, or number
-    format: '$%0.0f'
+    value_format_name: usd
     sql: ${income_unemployment}      
 
   - dimension: income_unemployment_is
-    label: 'Income: Has Unemployement Income'
+    label: 'Unemployement Income'
     type: yesno
+    group_label: 'Income Sources and Amounts'
     sql: ${TABLE}.income_unemployment_is
 
   - dimension: income_vet_disability
@@ -599,8 +661,9 @@
     sql: ${TABLE}.income_vet_disability
 
   - dimension: income_vet_disability_is
-    label: 'Income: Has Veteran Disability'
+    label: 'Veteran Disability'
     type: yesno
+    group_label: 'Income Sources and Amounts'
     sql: ${TABLE}.income_vet_disability_is
 
   - dimension: income_vet_pension
@@ -609,8 +672,9 @@
     sql: ${TABLE}.income_vet_pension
 
   - dimension: income_vet_pension_is
-    label: 'Income: Has Veteran Pension'    
+    label: 'Veteran Pension'    
     type: yesno
+    group_label: 'Income Sources and Amounts'
     sql: ${TABLE}.income_vet_pension_is
 
   - dimension: income_workers_comp
@@ -626,8 +690,9 @@
     sql: ${income_workers_comp}    
 
   - dimension: income_workers_comp_is
-    label: 'Income: Has Workers Comp'
+    label: 'Workers Comp'
     type: yesno
+    group_label: 'Income Sources and Amounts'   
     sql: ${TABLE}.income_workers_comp_is
 
   - dimension_group: last_updated
@@ -648,6 +713,26 @@
   - dimension: permanent_housing_is
     type: int
     sql: ${TABLE}.permanent_housing_is
+    
+  - dimension_group: path_engagement_date
+    label: 'PATH Engagement Date'
+    type: time
+    timeframes: [date, week, month]
+    sql: ${TABLE}.path_engagement_date
+    
+  - dimension: path_status_determination
+    type: yesno
+    sql: ${TABLE}.path_status_is   
+    
+  - dimension: path_enrollment_status
+    type: yesno
+    sql: ${TABLE}.path_status     
+    
+  - dimension_group: path_status_determination_date
+    label: 'PATH Determination Date'
+    type: time
+    timeframes: [date, week, month]
+    sql: ${TABLE}.path_status_determination      
 
 
   - dimension: prior_city
@@ -710,15 +795,13 @@
     type: int
     sql: ${TABLE}.ref_program
 
-  - dimension: ref_user
-    hidden: true
-    type: int
-    sql: ${TABLE}.ref_user
+  - dimension: ref_user 
+    label: 'User Creating'
+    sql: fn_getUserNameById(${TABLE}.ref_user)
 
-  - dimension: ref_user_updated
-    hidden: true
-    type: int
-    sql: ${TABLE}.ref_user_updated
+  - dimension: ref_user_updated 
+    label: 'User Updating'
+    sql: fn_getUserNameById(${TABLE}.ref_user_updated)
 
   - dimension: screen_type
     hidden: true
@@ -732,7 +815,7 @@
       WHEN ${screen_type} = 2 THEN '1 - Enrollment'
       WHEN ${screen_type} = 3 THEN '2 - Update'
       WHEN ${screen_type} = 4 THEN '4 - Exit'
-      WHEN ${screen_type} = 5 THEN '3 - Annual Assessment'
+      WHEN ${screen_type} = 6 THEN '3 - Annual Assessment'
       END
     
 

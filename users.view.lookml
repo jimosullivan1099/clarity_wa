@@ -58,6 +58,13 @@
   - dimension: ref_user_status
     type: int
     sql: ${TABLE}.ref_user_status
+    
+    
+  - dimension: user_status
+    sql_case:
+            Active: ${ref_user_status} = 1
+            Inactive: ${ref_user_status} = 2
+            Locked: ${ref_user_status} = 3
 
   - dimension: ref_user_updated
     type: int

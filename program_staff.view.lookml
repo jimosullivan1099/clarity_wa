@@ -18,3 +18,7 @@
     type: count
     drill_fields: [id]
 
+  - dimension: departments
+    label: 'Department'
+    type: int
+    sql: ${TABLE}.departments

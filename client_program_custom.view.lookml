@@ -1,4 +1,4 @@
-- view: client_program_custom
+- view: client_program_data
   fields:
 
   - dimension: id
