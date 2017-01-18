@@ -1,5 +1,4 @@
 
-
 - explore: base
   from: client_program_screening_base
   persist_for: 60 minutes
@@ -547,3 +546,4 @@
 #
 #    - join: import_client_map
 #      sql_on: ${import_client_map.ref_file} = ${import_files.id} 
+
